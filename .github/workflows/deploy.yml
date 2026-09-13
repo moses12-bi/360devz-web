@@ -1,0 +1,103 @@
+name: Build and deploy
+
+# main -> https://www.360devz.com
+#
+# This site is a static export (next.config.ts: output: "export"), so there
+# is no image to build and no process to restart. CI runs `next build`, which
+# writes a complete site to ./out, and rsyncs those files into the directory
+# Caddy already serves. Caddy reads from disk on every request, so the new
+# version is live the instant the copy finishes — no restart, no downtime.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'brand-source/**'     # alternates and unused marks, never served
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-site
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+
+      - name: Confirm the export is complete
+        run: |
+          set -euo pipefail
+          test -f out/index.html || { echo "::error::out/index.html missing — is output: \"export\" set in next.config.ts?"; exit 1; }
+          test -f out/404.html   || { echo "::error::out/404.html missing"; exit 1; }
+          # Next's static export writes about.html, not about/index.html.
+          for p in services educloud about contact privacy; do
+            test -f "out/$p.html" || { echo "::error::out/$p.html missing"; exit 1; }
+          done
+          echo "export ok: $(find out -type f | wc -l) files, $(du -sh out | cut -f1)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: out
+          retention-days: 7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: out
+
+      - name: Sync to the server
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          set -euo pipefail
+          : "${SSH_HOST:?SSH_HOST secret is empty}"
+          : "${SSH_USER:?SSH_USER secret is empty}"
+          : "${SSH_KEY:?SSH_PRIVATE_KEY secret is empty}"
+          SSH_HOST="$(printf '%s' "$SSH_HOST" | tr -d '[:space:]')"
+          SSH_USER="$(printf '%s' "$SSH_USER" | tr -d '[:space:]')"
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null 2>&1 \
+            || { echo "::error::SSH_PRIVATE_KEY is not a valid OpenSSH private key"; exit 1; }
+          ssh-keyscan -t ed25519 "$SSH_HOST" >> ~/.ssh/known_hosts
+
+          # --delete keeps the served directory an exact mirror of the export,
+          # so a page removed from the site disappears from the server too.
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes" \
+            out/ "$SSH_USER@$SSH_HOST:educloud/caddy/www/"
+
+          echo "synced: $(ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "$SSH_USER@$SSH_HOST" 'find educloud/caddy/www -type f | wc -l') files on the server"
+
+      - name: Verify it is being served
+        run: |
+          set -euo pipefail
+          # Only meaningful once DNS points www.360devz.com at this server.
+          # Until then Caddy has no certificate for the name and this is
+          # informational, not a failure.
+          code=$(curl -s -o /dev/null -w '%{http_code}' -m 30 https://www.360devz.com/ || echo 000)
+          if [ "$code" = "200" ]; then
+            echo "https://www.360devz.com/ -> 200"
+          else
+            echo "::warning::https://www.360devz.com/ returned $code — expected until DNS points at the server"
+          fi
