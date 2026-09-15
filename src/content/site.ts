@@ -202,7 +202,7 @@ export const founder: Member = {
   photo: "/team/moses.jpg",
   body: [
     "Architecture, backend, web, mobile, deployment and security. Builds payments infrastructure professionally in Kigali — which is where the reconciliation and mobile-money work in our systems comes from.",
-    "Every line that reaches a client system passes through one reviewer, and every system ships with a runbook that lets somebody else run it. Accountability you can name is worth more than a support queue you cannot.",
+    "Leads the engineering on every 360devz system and answers for what ships. Every system leaves with a runbook that lets somebody else run it — accountability you can name is worth more than a support queue you cannot.",
   ],
   facts: [
     { label: "Builds", value: "Spring Boot · Next.js · Flutter · PostgreSQL" },
@@ -214,8 +214,26 @@ export const founder: Member = {
 
 export const teamNote = {
   eyebrow: "The team",
-  title: "You deal with the person who builds it.",
-  lead: "No account managers, no handoff to a junior after the contract is signed, nothing outsourced. The engineer who designs your system is the one who writes it, deploys it and picks up the phone about it.",
+  title: "You deal with the people who build it.",
+  lead: "360devz stays close to the engineering. No unnecessary layers, no handoff to a junior team after the contract is signed, and no outsourcing the core of your system. We keep a small, trusted engineering network around our projects, and the people who design, build, review and deploy a system stay accountable for the result.",
+} as const;
+
+/**
+ * The network around the founder — described, not named. Nobody is listed
+ * here until their role has been agreed with them in writing. Founder-led
+ * is not founder-only, and this is where the site says so.
+ */
+export const teamNetwork = {
+  label: "Trusted collaborators and specialists",
+  body: [
+    "Founder-led is not founder-only. Around its projects, 360devz keeps a small, trusted network of engineers and specialists who contribute according to their expertise — engineering, mobile, security thinking, data and analytics, product and market strategy. Core engineering stays close to the company, specialists are brought in where a project needs them, and code that reaches a client system is reviewed before it ships, whoever wrote it.",
+    "That is how the company is built to grow: founder-led and hands-on today, more engineers contributing as the work does, and an engineering organisation forming from those working relationships rather than being announced ahead of them.",
+  ],
+  principles: [
+    "Small enough to stay accountable.",
+    "Technical enough to build serious systems.",
+    "Structured to grow beyond one person.",
+  ],
 } as const;
 
 /* ============================================================
@@ -413,7 +431,7 @@ export const assessment = {
 export const faqs: readonly Faq[] = [
   {
     q: "Who actually does the work?",
-    a: "Moses Sebagabo, the founder, does the engineering. Supervised interns take on scoped work as the company grows, and every change they make is reviewed before it ships. You will be talking to the person building your system, not an account manager.",
+    a: "360devz is founder-led: Moses Sebagabo leads the engineering and answers for what ships. Around each project we bring in trusted engineers and specialists according to what the work needs, and supervised graduates take on scoped tickets as the company grows. Every change, whoever wrote it, is reviewed before it reaches your system. You deal directly with the engineers building it, not with an account manager.",
   },
   {
     q: "Do you work with organisations outside Rwanda?",
@@ -506,7 +524,7 @@ export const contactPage = {
     "Any deadline that is real, and why",
   ],
   responseNote:
-    "You will get a reply from the person who would do the work, usually within two business days.",
+    "You will get a reply from the engineer who would lead the work, usually within two business days.",
 } as const;
 
 /* ============================================================

@@ -9,6 +9,7 @@ import { Section } from "@/components/Section";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
 import { Stats } from "@/components/Stats";
+import { TeamNetwork } from "@/components/TeamNetwork";
 import {
   aboutPage,
   awards,
@@ -54,6 +55,7 @@ export default function AboutPage() {
 
         <Section tone="alt" eyebrow={teamNote.eyebrow} title={teamNote.title} lead={teamNote.lead}>
           <FounderCard />
+          <TeamNetwork />
         </Section>
 
         <Section

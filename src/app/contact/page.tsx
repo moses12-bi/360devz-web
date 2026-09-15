@@ -10,7 +10,7 @@ import { company, contactPage, faqs } from "@/content/site";
 export const metadata: Metadata = {
   title: "Hire us — 360 DEVZ LTD",
   description:
-    "Submit a project and get a quote. Talk to the person who would do the work. 360 DEVZ LTD, Kigali, Rwanda.",
+    "Submit a project and get a quote. Talk directly to the engineers who would build it. 360 DEVZ LTD, Kigali, Rwanda.",
 };
 
 export default function ContactPage() {

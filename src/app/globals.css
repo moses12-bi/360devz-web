@@ -773,6 +773,45 @@ img {
   font-size: 0.92rem;
 }
 
+/* The network around the founder — same grid as .founder, so the label
+   sits under the portrait column and the copy under the bio. */
+.network {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 52px;
+  margin-top: 52px;
+  padding-top: 44px;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+
+.network__label {
+  margin-bottom: 22px;
+}
+
+.network__principles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.network__principles li {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: -0.01em;
+}
+
+.network__body p {
+  color: var(--ink-soft);
+  font-size: 0.97rem;
+  max-width: 58ch;
+  margin-top: 0;
+}
+
 /* ============================================================
    Recognition / credentials — the "awards" slot
    ============================================================ */
@@ -1532,7 +1571,8 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .founder {
+  .founder,
+  .network {
     grid-template-columns: 1fr;
     gap: 36px;
   }

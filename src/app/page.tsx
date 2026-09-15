@@ -10,6 +10,7 @@ import { ServiceCards } from "@/components/ServiceCards";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNav } from "@/components/SiteNav";
 import { Stats } from "@/components/Stats";
+import { TeamNetwork } from "@/components/TeamNetwork";
 import {
   awards,
   caseStudy,
@@ -85,6 +86,7 @@ export default function HomePage() {
 
         <Section tone="alt" eyebrow={teamNote.eyebrow} title={teamNote.title} lead={teamNote.lead}>
           <FounderCard />
+          <TeamNetwork />
         </Section>
 
         <Section
